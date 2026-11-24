@@ -17,6 +17,15 @@ import { join } from "node:path";
 const ENTRY =
   "I hereby tender my resignation: my out-of-office reply has been doing my job for six months and deserves the promotion, not me.";
 
+// Sealed gate: /output/entry.txt must be UTF-8 text of 1 to 140
+// characters, exactly one line. Fail loudly here rather than shipping
+// an entry the grader would list as invalid with 0 and no rate.
+if (ENTRY.length < 1 || ENTRY.length > 140 || ENTRY.includes("\n")) {
+  throw new Error(
+    `entry violates the gate: ${ENTRY.length} chars, one line required`,
+  );
+}
+
 for (const dir of ["/output", process.env.MAKEFUN_OUTPUT_DIR].filter(Boolean)) {
   try {
     mkdirSync(dir, { recursive: true });
